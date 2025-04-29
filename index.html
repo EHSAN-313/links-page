@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لینک‌های من | احسان </title>
+    <title>لینک‌های من | احسان</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css">
     <style>
@@ -14,7 +14,10 @@
             --light: #f8f9fa;
             --white: #ffffff;
             --gray: #e9ecef;
-            --skeleton: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            --linkedin: #0a66c2;
+            --github: #333333;
+            --telegram: #0088cc;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -29,6 +32,7 @@
             color: var(--text);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -38,48 +42,20 @@
         .container {
             width: 100%;
             max-width: 480px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        /* اسکلت لودر */
-        .skeleton {
-            animation: shimmer 1.5s infinite linear;
-            background: var(--skeleton);
-            background-size: 200% 100%;
-            border-radius: 8px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        .profile-skeleton {
-            height: 180px;
-            margin-bottom: 30px;
-            border-radius: 16px;
-        }
-
-        .link-skeleton {
-            height: 60px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-        }
-
-        /* استایل اصلی بعد از لود */
         .profile-card {
             background-color: var(--white);
             border-radius: 16px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
             margin-bottom: 30px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease;
-        }
-
-        .loaded .profile-card {
-            opacity: 1;
-            transform: translateY(0);
+            text-align: center;
+            transition: all 0.3s ease;
         }
 
         .profile-img {
@@ -88,7 +64,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid var(--white);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             margin: 0 auto 20px;
             display: block;
         }
@@ -96,15 +72,13 @@
         h1 {
             font-size: 24px;
             margin-bottom: 10px;
-            text-align: center;
-            font-weight: 700;
             color: var(--text);
+            font-weight: 700;
         }
 
         .bio {
             font-size: 15px;
             color: #6c757d;
-            text-align: center;
             margin-bottom: 20px;
             line-height: 1.7;
         }
@@ -127,20 +101,9 @@
             font-weight: 500;
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow);
             border: 1px solid var(--gray);
-            opacity: 0;
-            transform: translateY(10px);
         }
-
-        .loaded .link-btn {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .link-btn:nth-child(1) { transition-delay: 0.1s; }
-        .link-btn:nth-child(2) { transition-delay: 0.2s; }
-        .link-btn:nth-child(3) { transition-delay: 0.3s; }
 
         .link-btn:hover {
             transform: translateY(-3px);
@@ -154,13 +117,58 @@
             text-align: center;
         }
 
-        .linkedin { color: #0a66c2; border-color: rgba(10, 102, 194, 0.2); }
-        .github { color: #333333; border-color: rgba(51, 51, 51, 0.2); }
-        .telegram { color: #0088cc; border-color: rgba(0, 136, 204, 0.2); }
+        .linkedin { color: var(--linkedin); border-color: rgba(10, 102, 194, 0.2); }
+        .github { color: var(--github); border-color: rgba(51, 51, 51, 0.2); }
+        .telegram { color: var(--telegram); border-color: rgba(0, 136, 204, 0.2); }
 
-        .linkedin:hover { background-color: #0a66c2; color: white; }
-        .github:hover { background-color: #333333; color: white; }
-        .telegram:hover { background-color: #0088cc; color: white; }
+        .linkedin:hover { background-color: var(--linkedin); color: white; }
+        .github:hover { background-color: var(--github); color: white; }
+        .telegram:hover { background-color: var(--telegram); color: white; }
+
+        .stats-container {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            font-size: 14px;
+            color: #5a5a5a;
+        }
+
+        .stats-counter {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .stats-icon {
+            margin-left: 5px;
+        }
+
+        .ai-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 15px 0;
+            font-size: 13px;
+            color: #6c757d;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 480px;
+        }
+        
+        .ai-credit {
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .ai-philosophy {
+            font-size: 11px;
+            font-style: italic;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
 
         @media (max-width: 480px) {
             .profile-card {
@@ -189,52 +197,72 @@
 </head>
 <body>
     <div class="container">
-        <!-- اسکلت لودر قبل از لود محتوا -->
-        <div id="skeleton-loader">
-            <div class="profile-skeleton skeleton"></div>
-            <div class="link-skeleton skeleton"></div>
-            <div class="link-skeleton skeleton"></div>
-            <div class="link-skeleton skeleton"></div>
+        <div class="profile-card">
+            <img src="https://via.placeholder.com/150" alt="پروفایل" class="profile-img">
+            <h1>احسان</h1>
+            <p class="bio">توضیحات کوتاه درباره شما و فعالیت‌هایتان</p>
+        </div>
+        
+        <div class="links">
+            <a href="https://linkedin.com" class="link-btn linkedin">
+                <i class="fab fa-linkedin"></i>
+                لینکدین
+            </a>
+            
+            <a href="https://github.com" class="link-btn github">
+                <i class="fab fa-github"></i>
+                گیت‌هاب
+            </a>
+            
+            <a href="https://telegram.org" class="link-btn telegram">
+                <i class="fab fa-telegram"></i>
+                تلگرام
+            </a>
         </div>
 
-        <!-- محتوای اصلی (در ابتدا مخفی) -->
-        <div id="main-content" style="display: none;">
-            <div class="profile-card">
-                <img src="https://deeprooted.ir/uploads/posts/2018-01/1517176641_nobody_m.original.jpg" alt="پروفایل" class="profile-img">
-                <h1>احسان|ehsan </h1>
-                <p class="bio">ادعایــی نیست مــا هیچیــم از هیچستـان  </p>
-            </div>
-            
-            <div class="links">
-                <a href="https://linkedin.com" class="link-btn linkedin">
-                    <i class="fab fa-linkedin"></i>
-                    لینکدین
-                </a>
-                
-                <a href="https://github.com" class="link-btn github">
-                    <i class="fab fa-github"></i>
-                    گیت‌هاب
-                </a>
-                
-                <a href="https://telegram.org" class="link-btn telegram">
-                    <i class="fab fa-telegram"></i>
-                    تلگرام
-                </a>
-            </div>
+        <div class="stats-container">
+            <span class="stats-counter">۱,۲۴۳</span>
+            <i class="fas fa-eye stats-icon"></i>
+            <span>بازدید از این صفحه</span>
         </div>
     </div>
 
+    <footer class="ai-footer">
+        <div class="ai-credit">توسعه یافته به کمک هوش مصنوعی برای احسان</div>
+        <div class="ai-philosophy">«ادعایی نیست، ما هیچیم از هیچستان»</div>
+    </footer>
+
     <script>
-        // شبیه‌سازی لود داده‌ها
-        setTimeout(function() {
-            document.getElementById('skeleton-loader').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
+        // تابع انیمیشن شمارنده
+        function animateCounter(elementId, target) {
+            const element = document.getElementById(elementId);
+            const duration = 2000;
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
             
-            // اضافه کردن کلاس loaded برای انیمیشن‌ها
-            setTimeout(function() {
-                document.body.classList.add('loaded');
-            }, 50);
-        }, 1500); // زمان شبیه‌سازی لود (در پروژه واقعی می‌توانید با event DOMContentLoaded یا window.load جایگزین کنید)
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    clearInterval(timer);
+                    current = target;
+                }
+                element.textContent = Math.floor(current).toLocaleString('fa-IR');
+            }, 16);
+        }
+
+        // اجرای انیمیشن هنگام لود صفحه
+        document.addEventListener('DOMContentLoaded', function() {
+            animateCounter('visitor-count', 1243);
+            
+            // برای پیاده‌سازی واقعی می‌توانید از localStorage استفاده کنید:
+            /*
+            let count = localStorage.getItem('pageVisits');
+            count = count ? parseInt(count) + 1 : 1;
+            localStorage.setItem('pageVisits', count);
+            animateCounter('visitor-count', count);
+            */
+        });
     </script>
 </body>
 </html>
