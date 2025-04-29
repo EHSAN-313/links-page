@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قیمت لحظه‌ای بیت‌کوین به تومان</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        @font-face {
+            font-family: 'Vazir';
+            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff2') format('woff2'),
+                 url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        * {
+            font-family: 'Vazir', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .price-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .price-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 0.5rem;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .price-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .price-label {
+            font-size: 1rem;
+            color: #aaa;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            min-height: 2.5rem;
+        }
+        
+        .price-change {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            display: inline-block;
+            min-width: 80px;
+        }
+        
+        .positive {
+            background-color: rgba(0, 200, 83, 0.2);
+            color: #00e676;
+        }
+        
+        .negative {
+            background-color: rgba(255, 55, 55, 0.2);
+            color: #ff5252;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 1rem;
+            position: relative;
+        }
+        
+        .last-update {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        /* اسکلت لودر */
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        .skeleton-text {
+            width: 100%;
+            height: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .skeleton-text-lg {
+            height: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .skeleton-chart {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #3a7bd5;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .price-container {
+                flex-direction: column;
+            }
+            
+            .price-card {
+                margin-bottom: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>قیمت لحظه‌ای بیت‌کوین به تومان</h1>
+        </header>
+        
+        <div class="price-container">
+            <div class="price-card">
+                <div class="price-label">قیمت فعلی (تومان)</div>
+                <div class="price-value skeleton skeleton-text-lg" id="current-price"></div>
+                <div class="price-change skeleton" id="price-change-24h"></div>
+            </div>
+            
+            <div class="price-card">
+                <div class="price-label">بالاترین امروز (تومان)</div>
+                <div class="price-value skeleton skeleton-text-lg" id="high-24h"></div>
+            </div>
+            
+            <div class="price-card">
+                <div class="price-label">پایین‌ترین امروز (تومان)</div>
+                <div class="price-value skeleton skeleton-text-lg" id="low-24h"></div>
+            </div>
+            
+            <div class="price-card">
+                <div class="price-label">حجم معاملات (24h)</div>
+                <div class="price-value skeleton skeleton-text-lg" id="volume-24h"></div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="skeleton skeleton-chart" id="chart-skeleton"></div>
+            <canvas id="price-chart" style="display: none;"></canvas>
+        </div>
+        
+        <div class="last-update skeleton skeleton-text" id="last-update" style="width: 200px; margin: 1rem auto;"></div>
+    </div>
+
+    <script>
+        // نرخ تبدیل دلار به تومان (می‌توانید از API نرخ ارز استفاده کنید)
+        const usdToTomanRate = 50000; // این مقدار باید از API دریافت شود
+        
+        // تنظیمات اولیه چارت
+        const ctx = document.getElementById('price-chart').getContext('2d');
+        let priceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'قیمت بیت‌کوین (تومان)',
+                    data: [],
+                    borderColor: 'rgba(58, 123, 213, 1)',
+                    backgroundColor: 'rgba(58, 123, 213, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: 'rgba(255, 255, 255, 1)',
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        rtl: true,
+                        labels: {
+                            font: {
+                                family: 'Vazir'
+                            },
+                            color: '#fff'
+                        }
+                    },
+                    tooltip: {
+                        rtl: true,
+                        bodyFont: {
+                            family: 'Vazir',
+                            size: 14
+                        },
+                        titleFont: {
+                            family: 'Vazir',
+                            size: 16
+                        },
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#3a7bd5',
+                        bodyColor: '#fff',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toLocaleString('fa-IR') + ' تومان';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#aaa',
+                            font: {
+                                family: 'Vazir'
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#aaa',
+                            font: {
+                                family: 'Vazir'
+                            },
+                            callback: function(value) {
+                                return value.toLocaleString('fa-IR') + ' تومان';
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // تابع برای حذف اسکلت لودر
+        function removeSkeleton() {
+            document.querySelectorAll('.skeleton').forEach(el => {
+                el.classList.remove('skeleton');
+            });
+            document.getElementById('price-chart').style.display = 'block';
+            document.getElementById('chart-skeleton').style.display = 'none';
+        }
+
+        // تابع برای قالب‌بندی اعداد به تومان
+        function formatToman(num) {
+            return new Intl.NumberFormat('fa-IR').format(Math.floor(num * usdToTomanRate));
+        }
+
+        // تابع برای دریافت داده‌های قیمت
+        async function fetchBitcoinData() {
+            try {
+                // دریافت داده‌های لحظه‌ای
+                const response = await axios.get('https://api.coingecko.com/api/v3/coins/bitcoin?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false');
+                const data = response.data.market_data;
+                
+                // به‌روزرسانی اطلاعات قیمت
+                document.getElementById('current-price').textContent = formatToman(data.current_price.usd) + ' تومان';
+                document.getElementById('high-24h').textContent = formatToman(data.high_24h.usd) + ' تومان';
+                document.getElementById('low-24h').textContent = formatToman(data.low_24h.usd) + ' تومان';
+                document.getElementById('volume-24h').textContent = formatToman(data.total_volume.usd) + ' تومان';
+                
+                // به‌روزرسانی تغییرات قیمت
+                const change24h = data.price_change_percentage_24h;
+                const changeElement = document.getElementById('price-change-24h');
+                changeElement.textContent = (change24h > 0 ? '+' : '') + change24h.toFixed(2) + '%';
+                changeElement.className = change24h >= 0 ? 'price-change positive' : 'price-change negative';
+                
+                // به‌روزرسانی تاریخ آخرین بروزرسانی
+                const now = new Date();
+                document.getElementById('last-update').textContent = 'آخرین بروزرسانی: ' + now.toLocaleTimeString('fa-IR');
+                
+                // دریافت داده‌های تاریخی برای نمودار
+                await fetchChartData();
+                
+                // حذف اسکلت لودر بعد از دریافت داده‌ها
+                removeSkeleton();
+            } catch (error) {
+                console.error('Error fetching Bitcoin data:', error);
+                // در صورت خطا، اسکلت لودر باقی می‌ماند و می‌توان پیام خطا نمایش داد
+            }
+        }
+
+        // تابع برای دریافت داده‌های تاریخی برای نمودار
+        async function fetchChartData() {
+            try {
+                const response = await axios.get('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily');
+                const prices = response.data.prices;
+                
+                // پردازش داده‌ها برای نمودار
+                const labels = [];
+                const data = [];
+                
+                prices.forEach((price, index) => {
+                    const date = new Date(price[0]);
+                    labels.push(date.toLocaleDateString('fa-IR'));
+                    data.push(price[1] * usdToTomanRate);
+                });
+                
+                // به‌روزرسانی نمودار
+                priceChart.data.labels = labels;
+                priceChart.data.datasets[0].data = data;
+                priceChart.update();
+            } catch (error) {
+                console.error('Error fetching chart data:', error);
+            }
+        }
+
+        // بارگذاری اولیه داده‌ها
+        fetchBitcoinData();
+        
+        // به‌روزرسانی خودکار هر 60 ثانیه
+        setInterval(fetchBitcoinData, 60000);
+    </script>
+</body>
+</html>
