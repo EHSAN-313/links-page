@@ -6,17 +6,11 @@
     <title>قیمت لحظه‌ای بیت‌کوین به تومان</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts.css">
     <style>
-        @font-face {
-            font-family: 'Vazir';
-            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff2') format('woff2'),
-                 url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir.woff') format('woff');
-            font-weight: normal;
-            font-style: normal;
-        }
-        
         * {
-            font-family: 'Vazir', sans-serif;
+            font-family: Vazirmatn, sans-serif;
+            box-sizing: border-box;
         }
         
         body {
@@ -28,48 +22,51 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            -webkit-font-smoothing: antialiased;
         }
         
         .container {
-            width: 90%;
+            width: 95%;
             max-width: 1200px;
-            margin: 2rem auto;
-            padding: 1.5rem;
+            margin: 1rem auto;
+            padding: 1rem;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            padding: 0 0.5rem;
         }
         
         h1 {
-            font-size: 2.2rem;
+            font-size: 1.5rem;
             margin-bottom: 0.5rem;
             background: linear-gradient(90deg, #00d2ff, #3a7bd5);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            font-weight: 700;
         }
         
         .price-container {
             display: flex;
-            justify-content: space-around;
             flex-wrap: wrap;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 0.75rem;
         }
         
         .price-card {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 0.5rem;
-            flex: 1;
-            min-width: 200px;
+            border-radius: 12px;
+            padding: 1rem;
+            flex: 1 1 calc(50% - 0.75rem);
+            min-width: 0;
             text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -78,29 +75,32 @@
         }
         
         .price-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         
         .price-label {
-            font-size: 1rem;
+            font-size: 0.85rem;
             color: #aaa;
             margin-bottom: 0.5rem;
+            font-weight: 500;
         }
         
         .price-value {
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             font-weight: bold;
-            min-height: 2.5rem;
+            min-height: 2rem;
+            line-height: 1.4;
         }
         
         .price-change {
-            font-size: 1rem;
+            font-size: 0.85rem;
             margin-top: 0.5rem;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
             display: inline-block;
-            min-width: 80px;
+            min-width: 70px;
+            font-weight: 500;
         }
         
         .positive {
@@ -115,19 +115,20 @@
         
         .chart-container {
             width: 100%;
-            height: 400px;
-            margin-top: 2rem;
+            height: 300px;
+            margin-top: 1.5rem;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
-            padding: 1rem;
+            border-radius: 12px;
+            padding: 0.75rem;
             position: relative;
         }
         
         .last-update {
             text-align: center;
             margin-top: 1rem;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #aaa;
+            padding: 0 0.5rem;
         }
         
         /* اسکلت لودر */
@@ -135,6 +136,7 @@
             position: relative;
             overflow: hidden;
             background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
         }
         
         .skeleton::after {
@@ -164,14 +166,13 @@
         
         .skeleton-text {
             width: 100%;
-            height: 1rem;
+            height: 0.85rem;
             margin-bottom: 0.5rem;
-            border-radius: 4px;
         }
         
         .skeleton-text-lg {
-            height: 2.5rem;
-            margin-bottom: 1rem;
+            height: 1.8rem;
+            margin-bottom: 0.75rem;
         }
         
         .skeleton-chart {
@@ -179,38 +180,55 @@
             height: 100%;
         }
         
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100px;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 4px solid #3a7bd5;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @media (max-width: 768px) {
-            .price-container {
-                flex-direction: column;
-            }
-            
-            .price-card {
-                margin-bottom: 1rem;
+        /* استایل‌های خاص موبایل */
+        @media (min-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 2rem auto;
+                width: 90%;
             }
             
             h1 {
+                font-size: 2rem;
+            }
+            
+            .price-card {
+                flex: 1;
+                padding: 1.25rem;
+                border-radius: 14px;
+            }
+            
+            .price-label {
+                font-size: 1rem;
+            }
+            
+            .price-value {
+                font-size: 1.6rem;
+            }
+            
+            .price-change {
+                font-size: 0.9rem;
+            }
+            
+            .chart-container {
+                height: 350px;
+                padding: 1rem;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .price-card {
+                flex: 1;
+                padding: 1.5rem;
+                border-radius: 16px;
+            }
+            
+            .price-value {
                 font-size: 1.8rem;
+            }
+            
+            .chart-container {
+                height: 400px;
             }
         }
     </style>
@@ -249,12 +267,12 @@
             <canvas id="price-chart" style="display: none;"></canvas>
         </div>
         
-        <div class="last-update skeleton skeleton-text" id="last-update" style="width: 200px; margin: 1rem auto;"></div>
+        <div class="last-update skeleton skeleton-text" id="last-update" style="width: 180px; margin: 1rem auto;"></div>
     </div>
 
     <script>
-        // نرخ تبدیل دلار به تومان (می‌توانید از API نرخ ارز استفاده کنید)
-        const usdToTomanRate = 50000; // این مقدار باید از API دریافت شود
+        // نرخ تبدیل دلار به تومان
+        const usdToTomanRate = 50000;
         
         // تنظیمات اولیه چارت
         const ctx = document.getElementById('price-chart').getContext('2d');
@@ -269,11 +287,11 @@
                     backgroundColor: 'rgba(58, 123, 213, 0.1)',
                     borderWidth: 3,
                     fill: true,
-                    tension: 0.4,
+                    tension: 0.3,
                     pointBackgroundColor: 'rgba(255, 255, 255, 1)',
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    pointBorderWidth: 2
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    pointBorderWidth: 1
                 }]
             },
             options: {
@@ -286,27 +304,28 @@
                         rtl: true,
                         labels: {
                             font: {
-                                family: 'Vazir'
+                                family: 'Vazirmatn'
                             },
-                            color: '#fff'
+                            color: '#fff',
+                            padding: 20
                         }
                     },
                     tooltip: {
                         rtl: true,
                         bodyFont: {
-                            family: 'Vazir',
-                            size: 14
+                            family: 'Vazirmatn',
+                            size: 12
                         },
                         titleFont: {
-                            family: 'Vazir',
-                            size: 16
+                            family: 'Vazirmatn',
+                            size: 14
                         },
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.85)',
                         titleColor: '#3a7bd5',
                         bodyColor: '#fff',
-                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderColor: 'rgba(255, 255, 255, 0.15)',
                         borderWidth: 1,
-                        padding: 12,
+                        padding: 10,
                         displayColors: false,
                         callbacks: {
                             label: function(context) {
@@ -318,28 +337,32 @@
                 scales: {
                     x: {
                         grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
+                            color: 'rgba(255, 255, 255, 0.08)',
                             drawBorder: false
                         },
                         ticks: {
                             color: '#aaa',
                             font: {
-                                family: 'Vazir'
-                            }
+                                family: 'Vazirmatn',
+                                size: 10
+                            },
+                            maxRotation: 45,
+                            minRotation: 45
                         }
                     },
                     y: {
                         grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
+                            color: 'rgba(255, 255, 255, 0.08)',
                             drawBorder: false
                         },
                         ticks: {
                             color: '#aaa',
                             font: {
-                                family: 'Vazir'
+                                family: 'Vazirmatn',
+                                size: 10
                             },
                             callback: function(value) {
-                                return value.toLocaleString('fa-IR') + ' تومان';
+                                return (value / 1000000).toLocaleString('fa-IR') + 'M';
                             }
                         }
                     }
@@ -395,7 +418,13 @@
                 removeSkeleton();
             } catch (error) {
                 console.error('Error fetching Bitcoin data:', error);
-                // در صورت خطا، اسکلت لودر باقی می‌ماند و می‌توان پیام خطا نمایش داد
+                // نمایش پیام خطا در صورت نیاز
+                const errorElement = document.createElement('div');
+                errorElement.textContent = 'خطا در دریافت داده‌ها. لطفاً اتصال اینترنت را بررسی کنید.';
+                errorElement.style.color = '#ff5252';
+                errorElement.style.textAlign = 'center';
+                errorElement.style.margin = '1rem 0';
+                document.querySelector('.container').appendChild(errorElement);
             }
         }
 
