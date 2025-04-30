@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مبدل وزن فان</title>
+    <style>
+        @font-face {
+            font-family: 'Vazir';
+            src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.eot');
+            src: url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.eot?#iefix') format('embedded-opentype'),
+                 url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.woff') format('woff'),
+                 url('https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        body {
+            font-family: 'Vazir', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .container:hover {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        h1 {
+            color: #4a69bd;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Vazir', sans-serif;
+            font-size: 16px;
+            transition: border 0.3s;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            border-color: #4a69bd;
+            outline: none;
+        }
+        
+        button {
+            background-color: #4a69bd;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Vazir', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #3c58a8;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            font-size: 16px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .weight-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #4a69bd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="weight-icon">⚖️</div>
+        <h1>مبدل وزن فان</h1>
+        
+        <div class="input-group">
+            <label for="weight">وزن خود را وارد کنید (کیلوگرم)</label>
+            <input type="number" id="weight" placeholder="مثال: 70">
+        </div>
+        
+        <button onclick="convertWeight()">تبدیل</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function convertWeight() {
+            const weightInput = document.getElementById('weight');
+            const resultDiv = document.getElementById('result');
+            
+            if (weightInput.value === '') {
+                resultDiv.textContent = 'لطفاً وزن خود را وارد کنید!';
+                resultDiv.style.display = 'block';
+                resultDiv.style.color = '#e74c3c';
+                return;
+            }
+            
+            const weight = parseFloat(weightInput.value);
+            
+            if (isNaN(weight) || weight <= 0) {
+                resultDiv.textContent = 'لطفاً یک عدد معتبر وارد کنید!';
+                resultDiv.style.display = 'block';
+                resultDiv.style.color = '#e74c3c';
+                return;
+            }
+            
+            resultDiv.textContent = `وزن شما ${weight} کیلوگرم است!`;
+            resultDiv.style.display = 'block';
+            resultDiv.style.color = '#27ae60';
+            
+            // افکت کوچک برای دکمه
+            const button = document.querySelector('button');
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 100);
+        }
+    </script>
+</body>
+</html>
